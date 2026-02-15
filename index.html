@@ -539,6 +539,12 @@
     </div>
 
     <div class="field">
+      <label for="pita">पिता / पति का नाम <span class="req">★</span></label>
+      <input type="text" id="pita" placeholder="जैसे: श्री रामसेवक शर्मा">
+      <div class="err-msg" id="err-pita">कृपया पिता / पति का नाम लिखें</div>
+    </div>
+
+    <div class="field">
       <label for="mobile">मोबाइल नंबर <span class="req">★</span>
         <span class="hint">WhatsApp नंबर दें तो बेहतर होगा</span>
       </label>
@@ -739,7 +745,7 @@
 //  5. Deploy karein — URL copy karein
 //  6. Woh URL neeche SCRIPT_URL mein daalein
 // ══════════════════════════════════════════════════════
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxnqV3XEH6I4knVm2Ih4KVlqkk8dUd65CLhOEySX22-w-oqPBpQhuOrWSK5Qr4TT1Cy/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzMRTMkAsn5RuXUZVcdAEkTlZJlJNJlP5fo_4UwhKSt_C1Ez7dB9BDIbk9Aoak6jiep/exec';
 
 // ── Validation ──────────────────────────────────────
 function validate(id, errorId, checkFn) {
@@ -759,6 +765,7 @@ function validate(id, errorId, checkFn) {
 async function submitStep1() {
   let ok = true;
   ok = validate('naam',   'err-naam',   v => v.length >= 2)     && ok;
+  ok = validate('pita',   'err-pita',   v => v.length >= 2)     && ok;
   ok = validate('mobile', 'err-mobile', v => /^[6-9]\d{9}$/.test(v)) && ok;
   ok = validate('gaon',   'err-gaon',   v => v.length >= 1)     && ok;
   ok = validate('block',  'err-block',  v => v.length >= 1)     && ok;
@@ -771,6 +778,7 @@ async function submitStep1() {
   const data = {
     step: 1,
     naam:   document.getElementById('naam').value.trim(),
+    pita:   document.getElementById('pita').value.trim(),
     mobile: document.getElementById('mobile').value.trim(),
     gaon:   document.getElementById('gaon').value.trim(),
     block:  document.getElementById('block').value.trim(),

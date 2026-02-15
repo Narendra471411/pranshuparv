@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRANSHUPARV — किसान पंजीकरण</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Hind:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --g1: #1b4332;
+    --g2: #2d6a4f;
+    --g3: #40916c;
+    --g4: #74c69d;
+    --g5: #d8f3dc;
+    --g6: #f0faf2;
+    --amber: #e9c46a;
+    --amber2: #f4a261;
+    --red: #e63946;
+    --white: #ffffff;
+    --cream: #fafdf7;
+    --text: #1a2e20;
+    --muted: #52796f;
+    --border: #b7dfc7;
+    --shadow: rgba(27,67,50,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'Hind', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(160deg, var(--g1) 0%, var(--g2) 60%, var(--g3) 100%);
+    padding: 28px 20px 36px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    width: 300px; height: 300px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 50%;
+    top: -100px; right: -80px;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    width: 200px; height: 200px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 50%;
+    bottom: -80px; left: -50px;
+  }
+  .header-logo {
+    width: 70px; height: 70px;
+    background: rgba(255,255,255,0.15);
+    border: 2.5px solid rgba(255,255,255,0.35);
+    border-radius: 50%;
+    margin: 0 auto 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem;
+    position: relative; z-index: 2;
+    backdrop-filter: blur(4px);
+  }
+  .header h1 {
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: white;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    position: relative; z-index: 2;
+    line-height: 1.2;
+  }
+  .header h1 small {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 2px;
+    color: var(--amber);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+  .header-sub {
+    color: rgba(255,255,255,0.75);
+    font-size: 0.9rem;
+    margin-top: 8px;
+    position: relative; z-index: 2;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap {
+    background: white;
+    padding: 16px 20px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px var(--shadow);
+  }
+  .progress-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding-bottom: 16px;
+  }
+  .p-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    position: relative;
+  }
+  .p-circle {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 2.5px solid var(--border);
+    background: white;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Baloo 2', cursive;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--muted);
+    transition: all 0.4s ease;
+    position: relative; z-index: 2;
+  }
+  .p-circle.active {
+    background: var(--g2);
+    border-color: var(--g2);
+    color: white;
+    box-shadow: 0 0 0 4px rgba(45,106,79,0.2);
+  }
+  .p-circle.done {
+    background: var(--g3);
+    border-color: var(--g3);
+    color: white;
+  }
+  .p-circle.done::after { content: '✓'; font-size: 1rem; }
+  .p-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.2;
+  }
+  .p-label.active { color: var(--g2); }
+  .p-line {
+    width: 80px;
+    height: 2px;
+    background: var(--border);
+    margin: 0 4px;
+    margin-bottom: 20px;
+    transition: background 0.4s;
+    flex-shrink: 0;
+  }
+  .p-line.done { background: var(--g3); }
+
+  /* ── FORM CARD ── */
+  .form-card {
+    max-width: 520px;
+    margin: 24px auto;
+    padding: 0 16px 40px;
+  }
+
+  /* ── STEP ── */
+  .step { display: none; animation: fadeUp 0.4s ease; }
+  .step.active { display: block; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── STEP HEADER ── */
+  .step-head {
+    text-align: center;
+    padding: 22px 16px 18px;
+    margin-bottom: 8px;
+  }
+  .step-head .step-icon {
+    font-size: 2.4rem;
+    display: block;
+    margin-bottom: 8px;
+  }
+  .step-head h2 {
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--g1);
+    margin-bottom: 4px;
+  }
+  .step-head p {
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .required-note {
+    font-size: 0.8rem;
+    color: var(--red);
+    text-align: center;
+    margin-bottom: 16px;
+    opacity: 0.8;
+  }
+
+  /* ── FIELD ── */
+  .field {
+    margin-bottom: 18px;
+  }
+  .field label {
+    display: block;
+    font-size: 0.93rem;
+    font-weight: 600;
+    color: var(--g1);
+    margin-bottom: 7px;
+    line-height: 1.3;
+  }
+  .field label .req { color: var(--red); margin-left: 2px; }
+  .field label .hint {
+    display: block;
+    font-weight: 400;
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .field input[type="text"],
+  .field input[type="tel"],
+  .field select,
+  .field textarea {
+    width: 100%;
+    padding: 13px 16px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-family: 'Hind', sans-serif;
+    font-size: 0.97rem;
+    color: var(--text);
+    background: white;
+    transition: border-color 0.25s, box-shadow 0.25s;
+    outline: none;
+    -webkit-appearance: none;
+  }
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    border-color: var(--g3);
+    box-shadow: 0 0 0 3px rgba(64,145,108,0.15);
+  }
+  .field input.error,
+  .field select.error {
+    border-color: var(--red);
+    box-shadow: 0 0 0 3px rgba(230,57,70,0.1);
+  }
+  .field .err-msg {
+    font-size: 0.78rem;
+    color: var(--red);
+    margin-top: 5px;
+    display: none;
+  }
+  .field .err-msg.show { display: block; }
+
+  /* ── TWO-COL ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media(max-width: 420px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* ── RADIO/CHECKBOX PILLS ── */
+  .pill-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+  }
+  .pill-group input { display: none; }
+  .pill-group label {
+    padding: 9px 16px;
+    border: 2px solid var(--border);
+    border-radius: 50px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    background: white;
+    user-select: none;
+  }
+  .pill-group input:checked + label {
+    background: var(--g2);
+    border-color: var(--g2);
+    color: white;
+    box-shadow: 0 2px 8px rgba(45,106,79,0.3);
+  }
+  .pill-group label:hover { border-color: var(--g3); color: var(--g2); }
+
+  /* ── CARD CHECKBOXES (fasal) ── */
+  .card-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+  }
+  .card-group input { display: none; }
+  .card-group label {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 12px 14px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    background: white;
+    user-select: none;
+  }
+  .card-group label .ci {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+  .card-group input:checked + label {
+    background: var(--g5);
+    border-color: var(--g3);
+    color: var(--g1);
+    font-weight: 600;
+  }
+  .card-group label:hover { border-color: var(--g3); }
+
+  /* ── DIVIDER ── */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 24px 0 18px;
+  }
+  .section-divider span {
+    font-family: 'Baloo 2', cursive;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--g2);
+    white-space: nowrap;
+    padding: 4px 12px;
+    background: var(--g5);
+    border-radius: 50px;
+  }
+  .section-divider::before,
+  .section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── BUTTONS ── */
+  .btn-primary {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--g2), var(--g3));
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s;
+    box-shadow: 0 4px 16px rgba(45,106,79,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 24px;
+    letter-spacing: 0.3px;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(45,106,79,0.45);
+  }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary.loading { opacity: 0.7; pointer-events: none; }
+
+  .btn-skip {
+    width: 100%;
+    padding: 13px;
+    background: transparent;
+    color: var(--muted);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    font-family: 'Hind', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.2s;
+  }
+  .btn-skip:hover { border-color: var(--g3); color: var(--g2); }
+
+  /* ── SUCCESS ── */
+  #step-success {
+    display: none;
+    text-align: center;
+    padding: 40px 20px;
+    animation: fadeUp 0.5s ease;
+  }
+  .success-icon {
+    width: 90px; height: 90px;
+    background: linear-gradient(135deg, var(--g2), var(--g3));
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.5rem;
+    box-shadow: 0 8px 28px rgba(45,106,79,0.35);
+    animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+  }
+  @keyframes popIn {
+    from { transform: scale(0); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+  .success-card {
+    background: white;
+    border-radius: 20px;
+    padding: 28px 24px;
+    box-shadow: 0 4px 24px var(--shadow);
+    margin-bottom: 16px;
+  }
+  .success-card h2 {
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.5rem;
+    color: var(--g1);
+    margin-bottom: 8px;
+  }
+  .success-card p { font-size: 0.95rem; color: var(--muted); line-height: 1.6; }
+  .success-tag {
+    display: inline-block;
+    background: var(--g5);
+    color: var(--g2);
+    font-weight: 700;
+    font-size: 0.82rem;
+    padding: 5px 14px;
+    border-radius: 50px;
+    margin-top: 12px;
+  }
+
+  /* ── STEP 1 SAVED BANNER ── */
+  .saved-banner {
+    background: linear-gradient(135deg, var(--g2), var(--g3));
+    color: white;
+    border-radius: 14px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    line-height: 1.4;
+    box-shadow: 0 3px 14px rgba(45,106,79,0.3);
+  }
+  .saved-banner .sb-icon { font-size: 1.4rem; flex-shrink: 0; }
+  .saved-banner strong { display: block; font-size: 0.95rem; }
+
+  /* ── SPINNER ── */
+  .spinner {
+    width: 18px; height: 18px;
+    border: 2.5px solid rgba(255,255,255,0.4);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+  .loading .spinner { display: block; }
+  .loading .btn-text { display: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── FOOTER ── */
+  .form-footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 0.8rem;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+  }
+  .form-footer strong { color: var(--g2); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-logo">🌾</div>
+  <h1>
+    <small>Farmer Producer Company</small>
+    Pranshuparv
+  </h1>
+  <p class="header-sub">किसान पंजीकरण फॉर्म</p>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-steps">
+    <div class="p-step">
+      <div class="p-circle active" id="pc1">1</div>
+      <div class="p-label active" id="pl1">बेसिक<br>जानकारी</div>
+    </div>
+    <div class="p-line" id="pline1"></div>
+    <div class="p-step">
+      <div class="p-circle" id="pc2">2</div>
+      <div class="p-label" id="pl2">फसल व<br>बीज</div>
+    </div>
+    <div class="p-line" id="pline2"></div>
+    <div class="p-step">
+      <div class="p-circle" id="pc3">3</div>
+      <div class="p-label" id="pl3">पूर्ण</div>
+    </div>
+  </div>
+</div>
+
+<!-- FORM -->
+<div class="form-card">
+
+  <!-- ══════════════════════════════════
+       STEP 1 — BASIC DETAILS
+  ══════════════════════════════════ -->
+  <div class="step active" id="step1">
+    <div class="step-head">
+      <span class="step-icon">👤</span>
+      <h2>आपकी बेसिक जानकारी</h2>
+      <p>यह जानकारी हमें आपसे संपर्क करने में मदद करेगी</p>
+    </div>
+    <p class="required-note">★ वाले खाने ज़रूर भरें</p>
+
+    <div class="field">
+      <label for="naam">पूरा नाम <span class="req">★</span></label>
+      <input type="text" id="naam" placeholder="जैसे: रामलाल शर्मा">
+      <div class="err-msg" id="err-naam">कृपया अपना नाम लिखें</div>
+    </div>
+
+    <div class="field">
+      <label for="mobile">मोबाइल नंबर <span class="req">★</span>
+        <span class="hint">WhatsApp नंबर दें तो बेहतर होगा</span>
+      </label>
+      <input type="tel" id="mobile" placeholder="10 अंकों का नंबर" maxlength="10">
+      <div class="err-msg" id="err-mobile">कृपया सही 10 अंकों का नंबर लिखें</div>
+    </div>
+
+    <div class="two-col">
+      <div class="field">
+        <label for="gaon">गाँव <span class="req">★</span></label>
+        <input type="text" id="gaon" placeholder="गाँव का नाम">
+        <div class="err-msg" id="err-gaon">गाँव का नाम लिखें</div>
+      </div>
+      <div class="field">
+        <label for="block">ब्लॉक / तहसील <span class="req">★</span></label>
+        <input type="text" id="block" placeholder="ब्लॉक का नाम">
+        <div class="err-msg" id="err-block">ब्लॉक का नाम लिखें</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="jila">जिला <span class="req">★</span></label>
+      <input type="text" id="jila" placeholder="जिले का नाम">
+      <div class="err-msg" id="err-jila">जिले का नाम लिखें</div>
+    </div>
+
+    <div class="field">
+      <label>क्या आपके पास किसान क्रेडिट कार्ड (KCC) है?</label>
+      <div class="pill-group">
+        <input type="radio" name="kcc" id="kcc1" value="हाँ">
+        <label for="kcc1">✅ हाँ है</label>
+        <input type="radio" name="kcc" id="kcc2" value="नहीं">
+        <label for="kcc2">❌ नहीं है</label>
+        <input type="radio" name="kcc" id="kcc3" value="अभी बनवाना है">
+        <label for="kcc3">📋 बनवाना है</label>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="submitStep1()">
+      <span class="btn-text">आगे बढ़ें →</span>
+      <div class="spinner"></div>
+    </button>
+  </div>
+
+  <!-- ══════════════════════════════════
+       STEP 2 — FASAL + BEEJ
+  ══════════════════════════════════ -->
+  <div class="step" id="step2">
+
+    <div class="saved-banner">
+      <span class="sb-icon">✅</span>
+      <div>
+        <strong>जानकारी सेव हो गई!</strong>
+        अब फसल और बीज के बारे में बताएं (यह वैकल्पिक है)
+      </div>
+    </div>
+
+    <div class="step-head" style="padding-top:8px">
+      <span class="step-icon">🌱</span>
+      <h2>फसल और बीज की जानकारी</h2>
+      <p>इससे हम आपकी बेहतर मदद कर सकेंगे</p>
+    </div>
+
+    <!-- Fasal -->
+    <div class="section-divider"><span>🌾 आपकी फसल</span></div>
+
+    <div class="field">
+      <label>कौन सी फसल उगाते हैं? <span class="hint">जितनी लागू हों सब चुनें</span></label>
+      <div class="card-group">
+        <input type="checkbox" id="f1" name="fasal" value="धान (चावल)">
+        <label for="f1"><span class="ci">🌾</span>धान</label>
+        <input type="checkbox" id="f2" name="fasal" value="गेहूं">
+        <label for="f2"><span class="ci">🌿</span>गेहूं</label>
+        <input type="checkbox" id="f3" name="fasal" value="मक्का">
+        <label for="f3"><span class="ci">🌽</span>मक्का</label>
+        <input type="checkbox" id="f4" name="fasal" value="सोयाबीन">
+        <label for="f4"><span class="ci">🫘</span>सोयाबीन</label>
+        <input type="checkbox" id="f5" name="fasal" value="सरसों">
+        <label for="f5"><span class="ci">🌻</span>सरसों</label>
+        <input type="checkbox" id="f6" name="fasal" value="चना">
+        <label for="f6"><span class="ci">🫛</span>चना</label>
+        <input type="checkbox" id="f7" name="fasal" value="अरहर दाल">
+        <label for="f7"><span class="ci">🌱</span>अरहर दाल</label>
+        <input type="checkbox" id="f8" name="fasal" value="सब्जियाँ">
+        <label for="f8"><span class="ci">🥬</span>सब्जियाँ</label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="zameen">कुल जमीन कितनी है?
+        <span class="hint">बीघा या एकड़ में लिखें</span>
+      </label>
+      <input type="text" id="zameen" placeholder="जैसे: 5 बीघा या 2 एकड़">
+    </div>
+
+    <!-- Beej -->
+    <div class="section-divider"><span>🌱 बीज और दवाई</span></div>
+
+    <div class="field">
+      <label>क्या इस सीजन बीज चाहिए?</label>
+      <div class="pill-group">
+        <input type="radio" name="beej" id="b1" value="हाँ, ज़रूर चाहिए">
+        <label for="b1">✅ हाँ चाहिए</label>
+        <input type="radio" name="beej" id="b2" value="शायद चाहिए">
+        <label for="b2">🤔 शायद</label>
+        <input type="radio" name="beej" id="b3" value="नहीं चाहिए">
+        <label for="b3">❌ नहीं</label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>क्या कृषि दवाई / खाद चाहिए?</label>
+      <div class="pill-group">
+        <input type="radio" name="dawai" id="d1" value="हाँ, ज़रूर चाहिए">
+        <label for="d1">✅ हाँ चाहिए</label>
+        <input type="radio" name="dawai" id="d2" value="शायद चाहिए">
+        <label for="d2">🤔 शायद</label>
+        <input type="radio" name="dawai" id="d3" value="नहीं चाहिए">
+        <label for="d3">❌ नहीं</label>
+      </div>
+    </div>
+
+    <!-- Bechna -->
+    <div class="section-divider"><span>💰 फसल बेचना</span></div>
+
+    <div class="field">
+      <label>क्या इस सीजन फसल बेचनी है?</label>
+      <div class="pill-group">
+        <input type="radio" name="bechna" id="be1" value="हाँ, बेचनी है">
+        <label for="be1">✅ हाँ बेचनी है</label>
+        <input type="radio" name="bechna" id="be2" value="शायद">
+        <label for="be2">🤔 शायद</label>
+        <input type="radio" name="bechna" id="be3" value="नहीं">
+        <label for="be3">❌ नहीं</label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="matra">कितनी फसल बेचनी है?
+        <span class="hint">क्विंटल में अनुमान</span>
+      </label>
+      <input type="text" id="matra" placeholder="जैसे: 20 क्विंटल धान">
+    </div>
+
+    <div class="field">
+      <label>अभी तक फसल कहाँ बेचते हैं?</label>
+      <div class="pill-group">
+        <input type="radio" name="mandi" id="m1" value="मंडी में">
+        <label for="m1">🏪 मंडी में</label>
+        <input type="radio" name="mandi" id="m2" value="आढ़ती / दलाल को">
+        <label for="m2">🤝 आढ़ती को</label>
+        <input type="radio" name="mandi" id="m3" value="सीधे बाज़ार में">
+        <label for="m3">🛒 बाज़ार में</label>
+        <input type="radio" name="mandi" id="m4" value="घर से ही">
+        <label for="m4">🏠 घर से</label>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="submitStep2()">
+      <span class="btn-text">✅ फॉर्म जमा करें</span>
+      <div class="spinner"></div>
+    </button>
+
+    <button class="btn-skip" onclick="skipStep2()">अभी छोड़ें — बाद में भरेंगे</button>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SUCCESS
+  ══════════════════════════════════ -->
+  <div id="step-success">
+    <div class="success-icon">🙏</div>
+    <div class="success-card">
+      <h2>धन्यवाद!</h2>
+      <p>आपकी जानकारी <strong>Pranshuparv FPC</strong> को मिल गई है।<br>हमारा प्रतिनिधि जल्द ही आपसे संपर्क करेगा।</p>
+      <span class="success-tag">✅ Google Sheets में सेव हो गया</span>
+    </div>
+    <p style="font-size:0.88rem;color:var(--muted);margin-top:12px;line-height:1.6">
+      🌾 बेहतर फसल • उचित दाम • समृद्ध जीवन
+    </p>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="form-footer">
+  <strong>🌾 PRANSHUPARV FARMER PRODUCER COMPANY</strong><br>
+  बेहतर फसल • उचित दाम • समृद्ध जीवन
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+//  !! IMPORTANT: APNA GOOGLE APPS SCRIPT URL YAHAN DAALEIN !!
+//  Neeche diye steps follow karein:
+//  1. script.google.com par jaayein
+//  2. Neeche diya Script code paste karein
+//  3. Deploy > New Deployment > Web App karein
+//  4. Execute as: Me, Who has access: Anyone
+//  5. Deploy karein — URL copy karein
+//  6. Woh URL neeche SCRIPT_URL mein daalein
+// ══════════════════════════════════════════════════════
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxnqV3XEH6I4knVm2Ih4KVlqkk8dUd65CLhOEySX22-w-oqPBpQhuOrWSK5Qr4TT1Cy/exec';
+
+// ── Validation ──────────────────────────────────────
+function validate(id, errorId, checkFn) {
+  const el = document.getElementById(id);
+  const err = document.getElementById(errorId);
+  if (!checkFn(el.value.trim())) {
+    el.classList.add('error');
+    err.classList.add('show');
+    return false;
+  }
+  el.classList.remove('error');
+  err.classList.remove('show');
+  return true;
+}
+
+// ── Submit Step 1 ───────────────────────────────────
+async function submitStep1() {
+  let ok = true;
+  ok = validate('naam',   'err-naam',   v => v.length >= 2)     && ok;
+  ok = validate('mobile', 'err-mobile', v => /^[6-9]\d{9}$/.test(v)) && ok;
+  ok = validate('gaon',   'err-gaon',   v => v.length >= 1)     && ok;
+  ok = validate('block',  'err-block',  v => v.length >= 1)     && ok;
+  ok = validate('jila',   'err-jila',   v => v.length >= 1)     && ok;
+  if (!ok) return;
+
+  const btn = document.querySelector('#step1 .btn-primary');
+  btn.classList.add('loading');
+
+  const data = {
+    step: 1,
+    naam:   document.getElementById('naam').value.trim(),
+    mobile: document.getElementById('mobile').value.trim(),
+    gaon:   document.getElementById('gaon').value.trim(),
+    block:  document.getElementById('block').value.trim(),
+    jila:   document.getElementById('jila').value.trim(),
+    kcc:    document.querySelector('input[name="kcc"]:checked')?.value || '',
+    timestamp: new Date().toLocaleString('hi-IN', {timeZone:'Asia/Kolkata'})
+  };
+
+  try {
+    await sendToSheets(data);
+  } catch(e) {
+    console.log('Sheet error (continue anyway):', e);
+  }
+
+  btn.classList.remove('loading');
+  goToStep2();
+}
+
+// ── Submit Step 2 ───────────────────────────────────
+async function submitStep2() {
+  const btn = document.querySelector('#step2 .btn-primary');
+  btn.classList.add('loading');
+
+  const fasalChecked = [...document.querySelectorAll('input[name="fasal"]:checked')].map(e=>e.value);
+
+  const data = {
+    step: 2,
+    naam:   document.getElementById('naam').value.trim(),
+    mobile: document.getElementById('mobile').value.trim(),
+    fasal:  fasalChecked.join(', ') || '—',
+    zameen: document.getElementById('zameen').value.trim() || '—',
+    beej:   document.querySelector('input[name="beej"]:checked')?.value || '—',
+    dawai:  document.querySelector('input[name="dawai"]:checked')?.value || '—',
+    bechna: document.querySelector('input[name="bechna"]:checked')?.value || '—',
+    matra:  document.getElementById('matra').value.trim() || '—',
+    mandi:  document.querySelector('input[name="mandi"]:checked')?.value || '—',
+    timestamp: new Date().toLocaleString('hi-IN', {timeZone:'Asia/Kolkata'})
+  };
+
+  try {
+    await sendToSheets(data);
+  } catch(e) {
+    console.log('Sheet error (continue anyway):', e);
+  }
+
+  btn.classList.remove('loading');
+  showSuccess();
+}
+
+function skipStep2() { showSuccess(); }
+
+// ── Navigation ──────────────────────────────────────
+function goToStep2() {
+  document.getElementById('step1').classList.remove('active');
+  document.getElementById('step2').classList.add('active');
+
+  // Update progress
+  document.getElementById('pc1').classList.remove('active');
+  document.getElementById('pc1').classList.add('done');
+  document.getElementById('pc1').textContent = '';
+  document.getElementById('pl1').classList.remove('active');
+  document.getElementById('pline1').classList.add('done');
+  document.getElementById('pc2').classList.add('active');
+  document.getElementById('pl2').classList.add('active');
+
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function showSuccess() {
+  document.getElementById('step2').classList.remove('active');
+  document.getElementById('step-success').style.display = 'block';
+
+  document.getElementById('pc2').classList.remove('active');
+  document.getElementById('pc2').classList.add('done');
+  document.getElementById('pc2').textContent = '';
+  document.getElementById('pl2').classList.remove('active');
+  document.getElementById('pline2').classList.add('done');
+  document.getElementById('pc3').classList.add('active');
+  document.getElementById('pl3').classList.add('active');
+
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ── Send to Google Sheets ───────────────────────────
+async function sendToSheets(data) {
+  if (!SCRIPT_URL || SCRIPT_URL.includes('YAHAN')) {
+    console.log('Script URL not set — data:', data);
+    return;
+  }
+  await fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(data)
+  });
+}
+
+// ── Live format mobile number ───────────────────────
+document.getElementById('mobile').addEventListener('input', function() {
+  this.value = this.value.replace(/\D/g,'').slice(0,10);
+});
+</script>
+
+</body>
+</html>
